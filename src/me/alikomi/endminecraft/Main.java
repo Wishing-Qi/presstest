@@ -16,9 +16,7 @@ public class Main extends Utils {
     private static Scanner scanner = new Scanner(System.in);
     private static Menu menu = new Menu(scanner);
 
-    public static void main(String[] args) throws InterruptedException, IOException, IllegalAccessException,
-            InstantiationException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException,
-            ClassNotFoundException, NamingException {
+    public static void main(String[] args) throws Exception {
         menu.selectVersion();
         MCForgeInject.inject();
         getInfo();

@@ -125,7 +125,7 @@ public class Menu extends Utils {
         }
 
         try {
-            Class.forName("org.spacehq.mc.protocol.MinecraftProtocol");
+            Class.forName("org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket");
             return;
         } catch (ClassNotFoundException e) {}
 

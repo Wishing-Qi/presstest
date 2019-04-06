@@ -79,6 +79,9 @@ public class MCForgeHandShakeV2 extends MCForgeHandShake {
                         }
                     });
 
+                    // TODO: Fill with known hashes, which requires keeping a file cache (FMLHandshakeMessages.java)
+                    out.writeVarInt(0); // empty map
+                    /*
                     out.writeVarInt(registries.size());
                     registries.forEach(r -> {
                         try {
@@ -88,6 +91,7 @@ public class MCForgeHandShakeV2 extends MCForgeHandShake {
                             e.printStackTrace();
                         }
                     });
+                    */
 
                     sendPluginResponse(packet.getMessageId(), targetNetworkReceiver, buf.toByteArray());
                     break;

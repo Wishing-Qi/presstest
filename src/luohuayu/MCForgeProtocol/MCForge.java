@@ -1,5 +1,6 @@
 package luohuayu.MCForgeProtocol;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class MCForge {
     public MCForge(Session session, Map<String, String> modList) {
         this.modList = modList;
         this.session = session;
-        this.handshake = new MCForgeHandShake(this);
+        this.handshake = isAfterVersion1_13() ? new MCForgeHandShakeV2(this) : new MCForgeHandShakeV1(this);
     }
 
     public void init() {
@@ -30,6 +31,8 @@ public class MCForge {
             public void packetReceived(PacketReceivedEvent e) {
                 if (e.getPacket() instanceof ServerPluginMessagePacket) {
                     handle(e.getPacket());
+                } else if (e.getPacket().getClass().getSimpleName().equals("LoginPluginRequestPacket")) {
+                    handshake.handle(e.getPacket());
                 }
             }
 
@@ -51,7 +54,6 @@ public class MCForge {
     public void handle(ServerPluginMessagePacket packet) {
         switch (packet.getChannel()) {
         case "FML|HS":
-        case "fml:hs": // 1.13
             this.handshake.handle(packet);
             break;
         case "REGISTER":
@@ -72,25 +74,21 @@ public class MCForge {
             Field field = cls.getDeclaredField("host");
             field.setAccessible(true);
 
-            field.set(this.session, this.session.getHost() + "\0FML\0");
-        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException e) {
+            field.set(this.session, this.session.getHost() + "\0" + handshake.getFMLVersion() + "\0");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static boolean isVersion1710() {
-        try {
-            Class<?> cls = Class.forName("org.spacehq.mc.protocol.ProtocolConstants");
-            Field field = cls.getDeclaredField("PROTOCOL_VERSION");
-            int protocol = field.getInt(null);
-            return (protocol == 5);
-        } catch (Exception e) {
-            return false;
-        }
+        return (getProtocolVersion() == 5);
+    }
+
+    public static boolean isAfterVersion1_13() {
+        return (getProtocolVersion() >= 393);
     }
 
     public static int getProtocolVersion() {
-        if (isVersion1710()) return 5;
         try {
             Class<?> cls;
             try {

@@ -27,9 +27,9 @@
       <dependency>
           <groupId>MCProtocolLib</groupId>
           <artifactId>MCProtocolLib</artifactId>
-          <version>1.12.2</version>
+          <version>1.13.2</version>
           <scope>system</scope>
-          <systemPath>${project.basedir}/lib/MC-1.12.2.jar</systemPath>
+          <systemPath>${project.basedir}/lib/MC-1.13.2.jar</systemPath>
       </dependency>
   </dependencies>
 </project>

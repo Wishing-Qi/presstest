@@ -1,12 +1,7 @@
 package me.alikomi.endminecraft;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import luohuayu.EndMinecraftPlus.Utils;
 import luohuayu.EndMinecraftPlus.proxy.ProxyPool;
@@ -50,9 +45,12 @@ public class Menu extends Utils {
         log("请输入是否开启操死乐乐模式 y/n，默认关闭(n)");
         boolean lele = getCo(scanner.nextLine(), "n").equals("y");
         getProxy();
-        log("正在获取MOD列表..");
-        Map<String, String> modList = new MCForgeMOTD().pingGetModsList(ip, port, MCForge.getProtocolVersion());
-        log("MOD列表: " + Arrays.toString(modList.keySet().toArray()));
+        Map<String, String> modList = new HashMap<>();
+        if (!MCForge.isAfterVersion1_13()) {
+            log("正在获取MOD列表..");
+            modList = new MCForgeMOTD().pingGetModsList(ip, port, MCForge.getProtocolVersion());
+            log("MOD列表: " + Arrays.toString(modList.keySet().toArray()));
+        }
         DistributedBotAttack attack = new DistributedBotAttack(ip, port, time, maxAttack, sleepTime);
         attack.setBotConfig(lele, tab, modList);
         attack.start();

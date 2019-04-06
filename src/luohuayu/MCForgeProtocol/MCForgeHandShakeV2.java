@@ -4,11 +4,9 @@ import io.netty.buffer.Unpooled;
 import org.spacehq.mc.protocol.packet.login.client.LoginPluginResponsePacket;
 import org.spacehq.mc.protocol.packet.login.server.LoginPluginRequestPacket;
 import org.spacehq.packetlib.io.buffer.ByteBufferNetInput;
-import org.spacehq.packetlib.io.buffer.ByteBufferNetOutput;
 import org.spacehq.packetlib.io.stream.StreamNetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -18,6 +16,12 @@ import java.util.List;
 import java.util.Map;
 
 public class MCForgeHandShakeV2 extends MCForgeHandShake {
+    private final int Packet_S2CModList = 1;
+    private final int Packet_C2SModListReply = 2;
+    private final int Packet_S2CRegistry = 3;
+    private final int Packet_S2CConfigData = 4;
+    private final int Packet_C2SAcknowledge = 99;
+
     public MCForgeHandShakeV2(MCForge forge) {
         super(forge);
     }
@@ -34,7 +38,7 @@ public class MCForgeHandShakeV2 extends MCForgeHandShake {
 
             int packetID = in.readByte();
             switch (packetID) {
-                case 1: {
+                case Packet_S2CModList: {
                     // recv: S2CModList
                     final List<String> mods = new ArrayList<>();
                     int len = in.readVarInt();
@@ -54,7 +58,7 @@ public class MCForgeHandShakeV2 extends MCForgeHandShake {
                     ByteArrayOutputStream buf = new ByteArrayOutputStream();
                     StreamNetOutput out = new StreamNetOutput(buf);
 
-                    out.writeByte(2);
+                    out.writeByte(Packet_C2SModListReply);
 
                     out.writeVarInt(mods.size());
                     mods.forEach(m -> {
@@ -88,24 +92,24 @@ public class MCForgeHandShakeV2 extends MCForgeHandShake {
                     sendPluginResponse(packet.getMessageId(), targetNetworkReceiver, buf.toByteArray());
                     break;
                 }
-                case 3: {
+                case Packet_S2CRegistry: {
                     // recv: S2CRegistry
                     // send: C2SAcknowledge
                     ByteArrayOutputStream buf = new ByteArrayOutputStream();
                     StreamNetOutput out = new StreamNetOutput(buf);
 
-                    out.writeByte(99);
+                    out.writeByte(Packet_C2SAcknowledge);
 
                     sendPluginResponse(packet.getMessageId(), targetNetworkReceiver, buf.toByteArray());
                     break;
                 }
-                case 4: {
+                case Packet_S2CConfigData: {
                     // recv: S2CConfigData
                     // send: C2SAcknowledge
                     ByteArrayOutputStream buf = new ByteArrayOutputStream();
                     StreamNetOutput out = new StreamNetOutput(buf);
 
-                    out.writeByte(99);
+                    out.writeByte(Packet_C2SAcknowledge);
 
                     sendPluginResponse(packet.getMessageId(), targetNetworkReceiver, buf.toByteArray());
                     break;

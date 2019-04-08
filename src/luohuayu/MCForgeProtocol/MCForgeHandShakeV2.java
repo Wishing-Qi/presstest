@@ -1,6 +1,5 @@
 package luohuayu.MCForgeProtocol;
 
-import io.netty.buffer.Unpooled;
 import org.spacehq.mc.protocol.packet.login.client.LoginPluginResponsePacket;
 import org.spacehq.mc.protocol.packet.login.server.LoginPluginRequestPacket;
 import org.spacehq.packetlib.io.buffer.ByteBufferNetInput;

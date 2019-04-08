@@ -31,10 +31,9 @@ public class MCForgeHandShakeV2 extends MCForgeHandShake {
         if (!packet.getChannel().equals("fml:loginwrapper")) return;
 
         try {
-            ByteBufferNetInput in = new ByteBufferNetInput(ByteBuffer.wrap(packet.getData()));
-            final String targetNetworkReceiver = in.readString();
-            final int payloadLength = in.readVarInt();
-            in = new ByteBufferNetInput(ByteBuffer.wrap(in.readBytes(payloadLength)));
+            LoginWrapper loginWrapper = new LoginWrapper().fromBytes(packet.getData());
+            String targetNetworkReceiver = loginWrapper.getTargetNetworkReceiver();
+            ByteBufferNetInput in = new ByteBufferNetInput(ByteBuffer.wrap(loginWrapper.getPayload()));
 
             int packetID = in.readByte();
             switch (packetID) {
@@ -93,7 +92,7 @@ public class MCForgeHandShakeV2 extends MCForgeHandShake {
                     });
                     */
 
-                    sendPluginResponse(packet.getMessageId(), targetNetworkReceiver, buf.toByteArray());
+                    reply(packet.getMessageId(), targetNetworkReceiver, buf.toByteArray());
                     break;
                 }
                 case Packet_S2CRegistry: {
@@ -104,7 +103,7 @@ public class MCForgeHandShakeV2 extends MCForgeHandShake {
 
                     out.writeByte(Packet_C2SAcknowledge);
 
-                    sendPluginResponse(packet.getMessageId(), targetNetworkReceiver, buf.toByteArray());
+                    reply(packet.getMessageId(), targetNetworkReceiver, buf.toByteArray());
                     break;
                 }
                 case Packet_S2CConfigData: {
@@ -115,7 +114,7 @@ public class MCForgeHandShakeV2 extends MCForgeHandShake {
 
                     out.writeByte(Packet_C2SAcknowledge);
 
-                    sendPluginResponse(packet.getMessageId(), targetNetworkReceiver, buf.toByteArray());
+                    reply(packet.getMessageId(), targetNetworkReceiver, buf.toByteArray());
                     break;
                 }
             }
@@ -128,13 +127,43 @@ public class MCForgeHandShakeV2 extends MCForgeHandShake {
         return "FML2";
     }
 
-    public void sendPluginResponse(int id, String targetNetworkReceiver, byte[] payload) throws IOException {
-        ByteArrayOutputStream buf = new ByteArrayOutputStream();
-        StreamNetOutput pb = new StreamNetOutput(buf);
-        pb.writeString(targetNetworkReceiver);
-        pb.writeVarInt(payload.length);
-        pb.writeBytes(payload);
+    private void reply(int id, String targetNetworkReceiver, byte[] payload) throws IOException {
+        forge.session.send(new LoginPluginResponsePacket(id, new LoginWrapper(targetNetworkReceiver, payload).toBytes()));
+    }
 
-        forge.session.send(new LoginPluginResponsePacket(id, buf.toByteArray()));
+    static class LoginWrapper {
+        private String targetNetworkReceiver;
+        private byte[] payload;
+
+        public LoginWrapper() {}
+        public LoginWrapper(String targetNetworkReceiver, byte[] payload) {
+            this.targetNetworkReceiver = targetNetworkReceiver;
+            this.payload = payload;
+        }
+
+        public LoginWrapper fromBytes(byte[] bytes) throws IOException {
+            ByteBufferNetInput in = new ByteBufferNetInput(ByteBuffer.wrap(bytes));
+            this.targetNetworkReceiver = in.readString();
+            this.payload = in.readBytes(in.readVarInt());
+            return this;
+        }
+
+        public byte[] toBytes() throws IOException {
+            ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            StreamNetOutput pb = new StreamNetOutput(buf);
+            pb.writeString(targetNetworkReceiver);
+            pb.writeVarInt(payload.length);
+            pb.writeBytes(payload);
+
+            return buf.toByteArray();
+        }
+
+        public String getTargetNetworkReceiver() {
+            return this.targetNetworkReceiver;
+        }
+
+        public byte[] getPayload() {
+            return this.payload;
+        }
     }
 }

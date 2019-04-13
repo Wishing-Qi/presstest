@@ -1,4 +1,7 @@
 {
+  "username": [
+    "$rnd"
+  ],
   "register": "/register $pwd $pwd",
   "messages": [
     "$rnd喵喵喵喵喵~",

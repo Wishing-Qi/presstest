@@ -1,7 +1,6 @@
 package me.alikomi.endminecraft;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
 import java.util.Scanner;
 
@@ -9,6 +8,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.InitialDirContext;
 
+import luohuayu.EndMinecraftPlus.Config;
 import luohuayu.EndMinecraftPlus.Utils;
 import luohuayu.MCForgeProtocol.MCForgeInject;
 
@@ -19,6 +19,7 @@ public class Main extends Utils {
     public static void main(String[] args) throws Exception {
         menu.selectVersion();
         MCForgeInject.inject();
+        Config.loadConfig();
         getInfo();
         showMenu();
     }

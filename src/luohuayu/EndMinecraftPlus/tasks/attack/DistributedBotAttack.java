@@ -3,6 +3,7 @@ package luohuayu.EndMinecraftPlus.tasks.attack;
 import io.netty.util.internal.ConcurrentSet;
 import luohuayu.ACProtocol.AnotherStarAntiCheat;
 import luohuayu.ACProtocol.AntiCheat3;
+import luohuayu.EndMinecraftPlus.Config;
 import luohuayu.EndMinecraftPlus.Utils;
 import luohuayu.EndMinecraftPlus.proxy.ProxyPool;
 import luohuayu.MCForgeProtocol.MCForge;
@@ -62,10 +63,10 @@ public class DistributedBotAttack extends IAttack {
                 for (Client c : clients) {
                     if (c.getSession().isConnected()) {
                         if (c.getSession().hasFlag("login")) {
-                            c.getSession().send(new ClientChatPacket(Utils.getRandomString(1, 4) + "喵喵喵喵喵~"));
+                            c.getSession().send(new ClientChatPacket(Config.instance.getRandMessage()));
                         } else if (c.getSession().hasFlag("join")) {
                             String pwd = Utils.getRandomString(7, 12);
-                            c.getSession().send(new ClientChatPacket("/register " + pwd + " " + pwd));
+                            c.getSession().send(new ClientChatPacket(Config.instance.getRegisterCommand(pwd)));
                             c.getSession().setFlag("login", true);
                         }
 

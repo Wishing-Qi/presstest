@@ -1,7 +1,8 @@
 # EndMinecraftPlus
-基于<a href="https://github.com/iuli-moe/EndMinecraft">EndMinecraft</a>优化修改的Minecraft压测工具<br>
+Minecraft服务器压力测试工具,基于MCProtocolLib协议库<br>
 本工具根据MIT协议开源,只可用于服务器压力测试<br>
-请勿用于其他非法用途,否则造成的后果由使用者自行承担!
+请勿用于其他非法用途,否则造成的后果由使用者自行承担!<br>
+不提供构建版本,所有问题请在Issues反馈,不接受其他渠道反馈
 
 #### 支持方式: ####
 1.单IP MOTD<br>

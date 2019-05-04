@@ -224,18 +224,17 @@ public class DistributedBotAttack extends IAttack {
             switch (packet.getChannel()) {
                 case "AntiCheat3.4.3":
                     String code = ac3.uncompress(packet.getData());
-                    byte[] checkData = ac3.getCheckData("AntiCheat3.jar", code,
-                            new String[]{"44f6bc86a41fa0555784c255e3174260"});
+                    byte[] checkData = ac3.getCheckData("AntiCheat3.jar", code, Config.instance.getAnticheatMD5s());
                     session.send(new ClientPluginMessagePacket("AntiCheat3.4.3", checkData));
                     break;
-                case "anotherstaranticheat":
+                case "anotheranticheat":
                     String salt = asac.decodeSPacket(packet.getData());
-                    byte[] data = asac.encodeCPacket(new String[]{"4863f8708f0c24517bb5d108d45f3e15"}, salt);
-                    session.send(new ClientPluginMessagePacket("anotherstaranticheat", data));
+                    byte[] data = asac.encodeCPacket(Config.instance.getAnticheatMD5s(), salt);
+                    session.send(new ClientPluginMessagePacket("anotheranticheat", data));
                     break;
                 case "VexView":
                     if (new String(packet.getData()).equals("GET:Verification"))
-                        session.send(new ClientPluginMessagePacket("VexView", "Verification:1.8.10".getBytes()));
+                        session.send(new ClientPluginMessagePacket("VexView", ("Verification:" + Config.instance.getVexviewVersion()).getBytes()));
                     break;
                 default:
             }

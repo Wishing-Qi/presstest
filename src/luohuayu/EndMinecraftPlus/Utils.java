@@ -4,9 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,6 +109,28 @@ public class Utils {
             method.invoke(cl, file.toURL());
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static String md5(String str) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(str.getBytes());
+            byte[] digest = md.digest();
+            return String.format("%0" + (digest.length << 1) + "x", new BigInteger(1, digest));
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+    }
+
+    public static String md5(byte[] buf) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(buf);
+            byte[] digest = md.digest();
+            return String.format("%0" + (digest.length << 1) + "x", new BigInteger(1, digest));
+        } catch (NoSuchAlgorithmException e) {
+            return null;
         }
     }
 }

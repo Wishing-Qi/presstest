@@ -1,13 +1,12 @@
 package luohuayu.ACProtocol;
 
+import luohuayu.EndMinecraftPlus.Utils;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -36,7 +35,7 @@ public class AntiCheat3 {
                     result += md5 + ",";
                 }
             }
-            result += md5(buf3);
+            result += Utils.md5(buf3);
             return compress(result);
         } catch (IOException e) {
             e.printStackTrace();
@@ -70,16 +69,5 @@ public class AntiCheat3 {
         }
 
         return new String(out.toByteArray());
-    }
-
-    public String md5(byte[] buf) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(buf);
-            byte[] digest = md.digest();
-            return String.format("%0" + (digest.length << 1) + "x", new BigInteger(1, digest));
-        } catch (NoSuchAlgorithmException e) {
-            return null;
-        }
     }
 }
